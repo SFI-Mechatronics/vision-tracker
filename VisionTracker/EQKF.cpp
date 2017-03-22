@@ -189,45 +189,4 @@ Eigen::Matrix4d EQKF::Correct(Eigen::Matrix4d M)
 	return M_est;
 }
 
-bool EQKF::BoolSign(double u)
-{
-	if (u >= 0.0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-Eigen::Quaterniond EQKF::CheckQuartonian(Eigen::Quaterniond qIn)
-{
-	double s1, s2;
-
-	s1 = 0.0;
-	s2 = 0.0;
-	
-	s1 = abs(qIn.w() - qOld.w());
-	s1 = s1 + abs(qIn.x() - qOld.x());
-	s1 = s1 + abs(qIn.y() - qOld.y());
-	s1 = s1 + abs(qIn.z() - qOld.z());
-
-	s2 = abs(-qIn.w() - qOld.w());
-	s2 = s2 + abs(-qIn.x() - qOld.x());
-	s2 = s2 + abs(-qIn.y() - qOld.y());
-	s2 = s2 + abs(-qIn.z() - qOld.z());
-
-	if (s1 > s2)
-	{
-		qOld = qIn;
-	}
-	else
-	{
-		qOld.w() = -qIn.w();
-		qOld.vec() = -qIn.vec();
-	}
-
-	return qOld;
-}
 
