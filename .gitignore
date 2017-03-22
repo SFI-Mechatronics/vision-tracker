@@ -45,3 +45,19 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+VisionTracker.VC.db
+*.opendb
+*.tlog
+VisionTracker/x64/Debug/VisionTracker.log
+*.log
+*.obj
+VisionTracker/VisionTracker.vcxproj.filters
+*.user
+*.suo
+*.pdb
+x64/Debug/VisionTracker.ilk
+*.idb
+x64/Debug/VisionTracker.exe
+*.iobj
+x64/Release/VisionTracker.ipdb
+x64/Release/VisionTracker.exe
