@@ -3,7 +3,7 @@
 #include "EQKF.hpp"
 
 // VisionTracker Notes
-// Sondre Sanden Tørdal
+// Sondre Sanden Tï¿½rdal
 // Averaging quartenions: http://stackoverflow.com/questions/12374087/average-of-multiple-quaternions
 
 // Define desired marker ids
@@ -67,7 +67,7 @@ void UdpCommunication()
 
 	// Keep listening for data
 	while (true)
-	{	
+	{
 		// Try to receive some data, this is a blocking call
 		if ((recvfrom(s, udpBufferRead, sizeof(udpBufferRead), 0, (struct sockaddr*) &si_other, &slen)) == SOCKET_ERROR)
 		{
@@ -85,14 +85,14 @@ void UdpCommunication()
 			// Cast struct to send buffer
 			memcpy(&udpBufferWrite, &udpSend, sizeof(udpSend));
 		}
-		
+
 		// Reply the client with data
 		if (sendto(s, udpBufferWrite, sizeof(udpBufferWrite), 0, (struct sockaddr*) &si_other, slen) == SOCKET_ERROR)
 		{
 			printf("sendto() failed with error code : %d", WSAGetLastError());
 			exit(EXIT_FAILURE);
 		}
-	
+
 		// Close thread based on condition
 		if (closeUdp)
 		{
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 
 	// Start UDP communication thread
 	std::thread udpThread(UdpCommunication);
-	
+
 	// General settings
 	cv::setUseOptimized(true);
 	Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 
 	// Specify the physical marker length
 	float markerLength = 0.29f; // m Comment: tvecs have the same output units
-	
+
 	// Define variables
 	int cubeCalibCount[4] = { 0, 0, 0, 0 };
 	int saveImageCount = 0;
@@ -207,7 +207,7 @@ int main(int argc, char** argv)
 	H21.row(1) << 0.9998, 0.0172, -0.0031, 0.0001;
 	H21.row(2) << 0.0172, -0.9998, 0.0024, -0.1973;
 	H21.row(3) << 0, 0, 0, 1;
-	
+
 	H31.row(0) << 0.0045, -0.0016, -1.0000, -0.1967;
 	H31.row(1) << 0.0114, -0.9999, 0.0017, 0.0021;
 	H31.row(2) << -0.9999, -0.0114, -0.0044, -0.1987;
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
 
 	// EQKF
 	EQKF KF;
-	
+
 	// Create Window and trackbars
 	cv::namedWindow("output", 1);
 
@@ -349,12 +349,12 @@ int main(int argc, char** argv)
 		Eigen::Vector3d pos, posAvg, posEst;
 		Eigen::Matrix4d A = Eigen::Matrix4d::Zero();
 		Eigen::Vector4d q = Eigen::Vector4d::Zero();
-			
+
 		pos << 0, 0, 0;
 
 		int count = 0;
 		double aSum = 0.0;
-			
+
 		if (markerFound[0])
 		{
 			T1 = M1;
@@ -371,7 +371,7 @@ int main(int argc, char** argv)
 
 			count++;
 		}
-			
+
 		if (markerFound[1])
 		{
 			T2 = M2*H21;
@@ -422,7 +422,7 @@ int main(int argc, char** argv)
 
 			count++;
 		}
-			
+
 		if (markerFound[4])
 		{
 			T5 = M5*H51;
@@ -448,7 +448,7 @@ int main(int argc, char** argv)
 
 			// Solve eigenvalue problem
 			Eigen::EigenSolver<Eigen::Matrix4d> es(A);
-				
+
 			Eigen::Vector4d lambda = es.eigenvalues().real();
 			Eigen::Matrix4d V = es.eigenvectors().real();
 
@@ -462,7 +462,7 @@ int main(int argc, char** argv)
 			qAvg.x() = V.col(index)(1);
 			qAvg.y() = V.col(index)(2);
 			qAvg.z() = V.col(index)(3);
-			qAvg.normalize();			
+			qAvg.normalize();
 
 			Eigen::Matrix3d R, R_est;
 			R = qAvg.toRotationMatrix();
@@ -477,15 +477,15 @@ int main(int argc, char** argv)
 			KF.Predict();
 			H_est = KF.Correct(H);
 
-				
+
 			qEst = static_cast<Eigen::Matrix3d>(H_est.block<3, 3>(0, 0));
 
 			start = std::clock();
-			
+
 			// Draw estimated Arcuo coordinate on top of box
 			DrawAxis(imageCopy, H_est, camMatrix, distCoeffs, 0.5f * markerLength);
 			//DrawAxis(imageCopy, H_est*X3, camMatrix, distCoeffs, 1.0f * markerLength);
-			
+
 			// Reply UDP client with same data amount
 			if (udpActive)
 			{
@@ -507,11 +507,11 @@ int main(int argc, char** argv)
 				udpSend.posEst[6] = static_cast<float>(qEst.z());
 			}
 		}
-		
+
 		if (udpActive)
 		{
 			// Robot end-effector
-			//DrawAxis(imageCopy, X2.inverse()*ComauFK(udpRead->q), camMatrix, distCoeffs, 1.0f * markerLength);
+			DrawAxis(imageCopy, X2.inverse()*ComauFK(udpRead->q), camMatrix, distCoeffs, 1.0f * markerLength);
 
 			// EM-1500 coordinate
 			H01 = T01*GetPoseSP(udpRead->posSP1);
